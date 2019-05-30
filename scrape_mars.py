@@ -1,42 +1,65 @@
 from splinter import Browser
 from bs4 import BeautifulSoup
-
+import requests
+import pymongo
+import time
+import pandas as pd
+from selenium import webdriver
 
 def init_browser():
-    # @NOTE: Replace the path with your actual path to the chromedriver
     executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
     return Browser("chrome", **executable_path, headless=False)
 
 def scrape():
     browser = init_browser()
-    listings = {}
-
-    url = ""
+    #Mars latest News
+    url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
-    time.sleep(1)
-
     html = browser.html
-    soup = BeautifulSoup(html, "html.parser")
-
-
-    # Get the average temps
-    avg_temps = soup.find('div', id='weather')
-
-    # Get the min avg temp
-    min_temp = avg_temps.find_all('strong')[0].text
-
-    # Get the max avg temp
-    max_temp = avg_temps.find_all('strong')[1].text
-
-    # BONUS: Find the src for the sloth image
-    relative_image_path = soup.find_all('img')[2]["src"]
-    sloth_img = url + relative_image_path
+    soup = BeautifulSoup(html, 'html.parser')
+    news_title = soup.find('div', class_='content_title').find('a').text
+    news_p = soup.find('div', class_='article_teaser_body').text
+    news= [news_title, news_p]
+    #JPL Mars Space Images
+    url2 = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    main_jpl= 'https://www.jpl.nasa.gov'
+    browser.click_link_by_partial_text('FULL IMAGE')
+    time.sleep(2)
+    browser.click_link_by_partial_text('more info')
+    time.sleep(2)
+    featured_image_url = soup.find('figure', class_='lede').find('a')['href']
+    JPL = main_jpl+featured_image_url
+    #Mars Weather
+    url3 = 'https://twitter.com/marswxreport?lang=en'
+    mars_weather = soup.find('p', class_='tweet-text').text
+    #Mars Facts
+    url_table = 'https://space-facts.com/mars/'
+    mars_facts = soup.find('table', class_='tablepress tablepress-id-mars').text
+    mars_table= pd.read_html(url_table)
+    df = mars_table[0]
+    df.columns = ['FACT', 'VALUE']
+    table= df.to_html('mars_table.html')
+    #Mars Hemispheres
+    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url)
+    hemisphere_image_urls= []
+    link= browser.find_by_css("a.product-item h3")
+    for i in range(len(link)):
+        base = {}
+        browser.find_by_css("a.product-item h3")[i].click()
+        url= browser.find_link_by_text("Sample").first   
+        base["title"] = browser.find_by_css("h2.title").text
+        base["img_url"] = url["href"]
+        hemisphere_image_urls.append(base)
+        browser.back()
 
     # Store data in a dictionary
-    costa_data = {
-        "sloth_img": sloth_img,
-        "min_temp": min_temp,
-        "max_temp": max_temp
+    scrape_mars = {
+        "news": news,
+        "JPL": JPL,
+        "mars_weather": mars_weather,
+        "mars_facts": table,
+        "hemisphere_urls": hemisphere_image_urls
     }
 
     # Close the browser after scraping
