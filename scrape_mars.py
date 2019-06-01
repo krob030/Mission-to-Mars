@@ -7,7 +7,7 @@ import pandas as pd
 from selenium import webdriver
 
 def init_browser():
-    executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
+    executable_path = {"executable_path": "chromedriver.exe"}
     return Browser("chrome", **executable_path, headless=False)
 
 def scrape():
@@ -21,7 +21,7 @@ def scrape():
     news_p = soup.find('div', class_='article_teaser_body').text
     news= [news_title, news_p]
     #JPL Mars Space Images
-    url2 = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     main_jpl= 'https://www.jpl.nasa.gov'
     browser.click_link_by_partial_text('FULL IMAGE')
     time.sleep(2)
@@ -30,12 +30,12 @@ def scrape():
     featured_image_url = soup.find('figure', class_='lede').find('a')['href']
     JPL = main_jpl+featured_image_url
     #Mars Weather
-    url3 = 'https://twitter.com/marswxreport?lang=en'
+    url = 'https://twitter.com/marswxreport?lang=en'
     mars_weather = soup.find('p', class_='tweet-text').text
     #Mars Facts
-    url_table = 'https://space-facts.com/mars/'
+    url = 'https://space-facts.com/mars/'
     mars_facts = soup.find('table', class_='tablepress tablepress-id-mars').text
-    mars_table= pd.read_html(url_table)
+    mars_table= pd.read_html(url)
     df = mars_table[0]
     df.columns = ['FACT', 'VALUE']
     table= df.to_html('mars_table.html')

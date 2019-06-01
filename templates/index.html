@@ -17,10 +17,21 @@
       <h1>Mission to Mars</h1>
       <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
     </div>
-    <h3>Latest Mars News</h3>
+    <div class="container">
+      <h3>Latest Mars News</h3>
+      <h6>{{ item.news }}</h6>
+  </div>
+    <div class="container">
+      <div class="row">
+          <!-- Left Image-->
+          <div class="col-lg-8 col-md-8 col-sm-12">
+              <h3>Featured Mars Image</h3>
+              <img src="{{ item.JPL }}" style="max-width:100%; max-height: auto;" alt="Mars Featured Image">
+          </div>
     <h3>Featured Mars Image</h3>
     <img src="{{ vacation.sloth_img }}" alt="Full">
     <h3>Mars Hemispheres</h3>
+    <h4 class="card-title">{{ item.news }}</h4>
     </div>
 
   </div>
