@@ -19,22 +19,38 @@
     </div>
     <div class="container">
       <h3>Latest Mars News</h3>
-      <h6>{{ item.news }}</h6>
+      <h4>{{ mission_to_mars.news_title }}</h4>
+      <p>{{ mission_to_mars.news_p }}</p>
   </div>
     <div class="container">
       <div class="row">
-          <!-- Left Image-->
-          <div class="col-lg-8 col-md-8 col-sm-12">
+          <div class="col-md-8">
               <h3>Featured Mars Image</h3>
-              <img src="{{ item.JPL }}" style="max-width:100%; max-height: auto;" alt="Mars Featured Image">
+              <img src="{{ mission_to_mars.JPL }}" style="max-width:90%; max-height:15%;">
           </div>
-    <h3>Featured Mars Image</h3>
-    <img src="{{ vacation.sloth_img }}" alt="Full">
-    <h3>Mars Hemispheres</h3>
-    <h4 class="card-title">{{ item.news }}</h4>
+        <div class = "col-md-4">
+            <h4>Current Weather on Mars</h4>
+            <p>{{ mission_to_mars.mars_weather}}</p>
+            <br>
+            <h4>Mars Facts</h4>
+            <p>{{mission_to_mars.mars_facts | safe}}</p>
+        </div>
+        <div class="card-deck">
+        <div class ="row">
+          <div class = "col-md-12">
+              <h3><center>Mars Hemispheres</center></h3>
+              {% for hemisphere in mission_to_mars.hemisphere_image_urls %}
+                  <div class = "col-md-6">
+                      <div class="card text-white bg-dark" style="margin: 60px;">
+                          <img class="card-img-top" src="{{ hemisphere.img_url }}" align="middle" style="max-width:100%; max-height:100%;">
+                          <div class="card-body">
+                              <p class="card-text">{{ hemisphere.title }}</p>
+                            </div>
+                          </div>
+                      </div>
+              {% endfor %}
+            </div>      
     </div>
-
   </div>
 </body>
-
 </html>
